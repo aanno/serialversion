@@ -26,6 +26,8 @@ val classgraph: String by project
 val guava: String by project
 val junit: String by project
 val jakarta_annotations: String by project
+val commons_lang3_a: String by project
+val commons_lang3_b: String by project
 
 dependencies {
     implementation("io.github.classgraph:classgraph:$classgraph")
@@ -34,11 +36,12 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:$junit"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 
-    downloadJar1("jakarta.annotation:jakarta.annotation-api:$jakarta_annotations")
+    // downloadJar1("jakarta.annotation:jakarta.annotation-api:$jakarta_annotations")
     // new configuration did not obey to bom stuff (aanno)
-    downloadJar1("org.junit.jupiter:junit-jupiter:$junit")
+    // downloadJar1("org.junit.jupiter:junit-jupiter:$junit")
+    downloadJar1("org.apache.commons:commons-lang3:$commons_lang3_a")
 
-    downloadJar2("org.junit.jupiter:junit-jupiter:$junit")
+    downloadJar2("org.apache.commons:commons-lang3:$commons_lang3_b")
 }
 
 tasks {

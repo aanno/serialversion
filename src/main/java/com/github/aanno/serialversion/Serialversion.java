@@ -18,7 +18,7 @@ import java.util.zip.ZipInputStream;
 public class Serialversion {
 
     private static final String JAR_PATH1 = "build/test-jars-1/junit-jupiter-engine-5.10.0.jar";
-    private static final String JAR_PATH2 = "build/test-jars-1/junit-jupiter-engine-5.10.0.jar";
+    private static final String JAR_PATH2 = "build/test-jars-2/commons-lang3-3.14.0.jar";
 
     private static final class MyClassLoader extends URLClassLoader {
         MyClassLoader() {
@@ -46,13 +46,23 @@ public class Serialversion {
         }
     }
 
-    private final MyClassLoader classLoader = new MyClassLoader();
+    private final MyClassLoader classLoader;
 
     // cache
     private Class<?> serializable = null;
     private Method lookup = null;
 
     public Serialversion() {
+        this.classLoader = new MyClassLoader();
+    }
+
+    public Serialversion(File dirOfJars) throws IOException {
+        this();
+        classLoader.addDirOfJars(dirOfJars);
+    }
+
+    public void addDirOfJars(File dirOfJars) throws IOException {
+        classLoader.addDirOfJars(dirOfJars);
     }
 
     public Set<String> getClassNamesFromJarFile(File jar) throws IOException {
@@ -91,20 +101,18 @@ public class Serialversion {
         Set<String> classNames = getClassNamesFromJarFile(jarFile);
         Set<Class> classes = new HashSet<>(classNames.size());
         for (String name : classNames) {
-            if ("module-info".equals(name)) continue;
-            if ("package-info".equals(name)) continue;
+            if ("module-info".equals(name) || name.endsWith(".module-info")) continue;
+            if ("package-info".equals(name) || name.endsWith(".package-info")) continue;
             Class clazz = classLoader.loadClass(name); // Load the class by its name
             classes.add(clazz);
         }
         return classes;
     }
 
-    public Map<Class,Long> getClassesWithSvuFromJarFile(File jarFile) throws IOException, ClassNotFoundException, NoSuchFieldException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        // also add all JARs in same dir
-        classLoader.addDirOfJars(jarFile.getParentFile());
-        Map<Class,Long> result = new HashMap<>();
+    public Map<String,Long> getClassesWithSvuFromJarFile(File jarFile) throws IOException, ClassNotFoundException, NoSuchFieldException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        Map<String,Long> result = new HashMap<>();
         for (Class clazz : getClassesFromJarFile(jarFile)) {
-            result.put(clazz, getSerialVersionUID3(clazz));
+            result.put(clazz.getCanonicalName(), getSerialVersionUID3(clazz));
         }
         return result;
     }
@@ -154,9 +162,11 @@ public class Serialversion {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, NoSuchFieldException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         Serialversion instance = new Serialversion();
-        Map<Class, Long> map = instance.getClassesWithSvuFromJarFile(new File(JAR_PATH2));
-        for (Class<?> key : map.keySet()) {
-            System.out.println(key.getName() + " -> " + Long.toHexString(map.get(key)));
+        File jar = new File(JAR_PATH2);
+        instance.addDirOfJars(jar.getParentFile());
+        Map<String, Long> map = instance.getClassesWithSvuFromJarFile(jar);
+        for (String key : map.keySet()) {
+            System.out.println(key + " -> " + Long.toHexString(map.get(key)));
         }
     }
 
