@@ -1,3 +1,5 @@
+*.kts2*
+
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar

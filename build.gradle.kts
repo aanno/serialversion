@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("application")
 }
 
 group = "com.github.aanno.serialversion"
@@ -39,9 +40,13 @@ dependencies {
     // downloadJar1("jakarta.annotation:jakarta.annotation-api:$jakarta_annotations")
     // new configuration did not obey to bom stuff (aanno)
     // downloadJar1("org.junit.jupiter:junit-jupiter:$junit")
-    downloadJar1("org.apache.commons:commons-lang3:$commons_lang3_a")
 
+    downloadJar1("org.apache.commons:commons-lang3:$commons_lang3_a")
     downloadJar2("org.apache.commons:commons-lang3:$commons_lang3_b")
+}
+
+application {
+    mainClass = "com.github.aanno.serialversion.JarDiff"
 }
 
 tasks {
@@ -66,5 +71,9 @@ tasks {
     register<Copy>("testJars2") {
         from(downloadJar2)
         into("build/test-jars-2")
+    }
+
+    register<Delete>("deleteJars") {
+        delete("build/test-jars-1", "build/test-jars-2")
     }
 }
