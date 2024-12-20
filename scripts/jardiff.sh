@@ -22,6 +22,6 @@ cp build.gradle.kts build.gradle.kts2
 sed -i -E -e "s/downloadJar1.*$/downloadJar1\(\"$JAR1\"\)/" build.gradle.kts
 sed -i -E -e "s/downloadJar2.*$/downloadJar1\(\"$JAR1\"\)/" build.gradle.kts
 $GRADLE build -x test
-mv build.gradle.kts2 build.gradle.kts
+# mv build.gradle.kts2 build.gradle.kts
 
 popd
