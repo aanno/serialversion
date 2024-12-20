@@ -11,6 +11,8 @@ export JAR1="$1"
 shift
 export JAR2="$1"
 shift
+export JAR_BASENAME_1=`echo "$JAR1" | cut -d ':' -f 2`
+export JAR_BASENAME_2=`echo "$JAR2" | cut -d ':' -f 2`
 
 export GRADLE=./gradlew
 
@@ -22,6 +24,11 @@ cp build.gradle.kts build.gradle.kts2
 sed -i -E -e 's/^[ ]*downloadJar1(.*$/    downloadJar1("'$JAR1'")/' build.gradle.kts
 sed -i -E -e 's/^[ ]*downloadJar2(.*$/    downloadJar2("'$JAR2'")/' build.gradle.kts
 $GRADLE build -x test
+
+export JAR_FILE_1=`ls build/test-jars-1/${JAR_BASENAME_1}*.jar`
+export JAR_FILE_2=`ls build/test-jars-2/${JAR_BASENAME_2}*.jar`
+
+$GRADLE run --args "$JAR_FILE_1 $JAR_FILE_2"
 mv build.gradle.kts2 build.gradle.kts
 
 popd

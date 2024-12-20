@@ -55,8 +55,10 @@ public class JarDiff {
     }
 
     public static void main(String[] args) throws IOException, NoSuchFieldException, ClassNotFoundException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
-        File jarA = new File(JAR_PATH1);
-        File jarB = new File(JAR_PATH2);
+        // File jarA = new File(JAR_PATH1);
+        // File jarB = new File(JAR_PATH2);
+        File jarA = new File(args[0]);
+        File jarB = new File(args[1]);
 
         JarDiff instance = new JarDiff(jarA.getCanonicalFile().getParentFile(), jarB.getCanonicalFile().getParentFile());
         DiffResult result = instance.diff(jarA.getName(), jarB.getName());

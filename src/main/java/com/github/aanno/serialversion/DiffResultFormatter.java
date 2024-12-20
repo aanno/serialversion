@@ -62,7 +62,7 @@ public class DiffResultFormatter {
 
     public StringBuilder formatSvuDiff(StringBuilder stringBuilder, DiffSvu svuDiff) {
         stringBuilder.append("(").append(Long.toHexString(svuDiff.getSuv1()))
-                .append(", ").append(Long.toHexString(svuDiff.getSuv2())).append(")\n");
+                .append(", ").append(Long.toHexString(svuDiff.getSuv2())).append(")");
         return stringBuilder;
     }
 
