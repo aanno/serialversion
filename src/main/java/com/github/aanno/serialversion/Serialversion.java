@@ -22,7 +22,7 @@ public class Serialversion {
 
     private static final class MyClassLoader extends URLClassLoader {
         MyClassLoader() {
-            super(new URL[0], Thread.currentThread().getContextClassLoader());
+            super(new URL[0], null);
         }
 
         @Override
@@ -103,8 +103,16 @@ public class Serialversion {
         for (String name : classNames) {
             if ("module-info".equals(name) || name.endsWith(".module-info")) continue;
             if ("package-info".equals(name) || name.endsWith(".package-info")) continue;
-            Class clazz = classLoader.loadClass(name); // Load the class by its name
-            classes.add(clazz);
+            try {
+                Class clazz = classLoader.loadClass(name); // Load the class by its name
+                classes.add(clazz);
+            } catch (VerifyError e) {
+                System.err.println("Failed to load class " + name);
+                System.err.println(e);
+            } catch (IncompatibleClassChangeError e) {
+                System.err.println("Failed to load class " + name);
+                System.err.println(e);
+            }
         }
         return classes;
     }
@@ -112,7 +120,12 @@ public class Serialversion {
     public Map<String,Long> getClassesWithSvuFromJarFile(File jarFile) throws IOException, ClassNotFoundException, NoSuchFieldException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         Map<String,Long> result = new HashMap<>();
         for (Class clazz : getClassesFromJarFile(jarFile)) {
-            result.put(clazz.getCanonicalName(), getSerialVersionUID3(clazz));
+            try {
+                result.put(clazz.getName(), getSerialVersionUID3(clazz));
+            } catch (IncompatibleClassChangeError e) {
+                System.err.println("Failed to load class " + clazz);
+                System.err.println(e);
+            }
         }
         return result;
     }

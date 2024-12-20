@@ -60,6 +60,9 @@ public class JarDiff {
 
         JarDiff instance = new JarDiff(jarA.getCanonicalFile().getParentFile(), jarB.getCanonicalFile().getParentFile());
         DiffResult result = instance.diff(jarA.getName(), jarB.getName());
-        System.out.println(result);
+        DiffResultFormatterConfig config = new DiffResultFormatterConfig();
+        DiffResultFormatter formatter = new DiffResultFormatter(config);
+        System.out.println(formatter.format(result));
+        // System.out.println(result);
     }
 }
