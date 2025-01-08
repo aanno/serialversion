@@ -117,11 +117,14 @@ public class Serialversion {
         return classes;
     }
 
-    public Map<String,Long> getClassesWithSvuFromJarFile(File jarFile) throws IOException, ClassNotFoundException, NoSuchFieldException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    public Map<String,Long> getClassesWithSvuFromJarFile(File jarFile, boolean includeOnlySerializable) throws IOException, ClassNotFoundException, NoSuchFieldException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         Map<String,Long> result = new HashMap<>();
         for (Class clazz : getClassesFromJarFile(jarFile)) {
             try {
-                result.put(clazz.getName(), getSerialVersionUID3(clazz));
+                long svu = getSerialVersionUID3(clazz);
+                if (svu != 0 && svu != -1) {
+                    result.put(clazz.getName(), svu);
+                }
             } catch (IncompatibleClassChangeError e) {
                 System.err.println("Failed to load class " + clazz);
                 System.err.println(e);
@@ -177,7 +180,7 @@ public class Serialversion {
         Serialversion instance = new Serialversion();
         File jar = new File(JAR_PATH2);
         instance.addDirOfJars(jar.getParentFile());
-        Map<String, Long> map = instance.getClassesWithSvuFromJarFile(jar);
+        Map<String, Long> map = instance.getClassesWithSvuFromJarFile(jar, false);
         for (String key : map.keySet()) {
             System.out.println(key + " -> " + Long.toHexString(map.get(key)));
         }

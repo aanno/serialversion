@@ -13,13 +13,17 @@ public class JarDiff {
     private static final String JAR_PATH1 = "build/test-jars-1/commons-lang3-3.17.0.jar";
     private static final String JAR_PATH2 = "build/test-jars-2/commons-lang3-3.3.2.jar";
 
+    private DiffResultConfig diffResultConfig;
+
     private File dirA;
     private File dirB;
 
     private Serialversion svA;
     private Serialversion svB;
 
-    public JarDiff(File dirA, File dirB) throws IOException {
+    public JarDiff(DiffResultConfig config, File dirA, File dirB) throws IOException {
+        this.diffResultConfig = config;
+
         this.dirA = dirA;
         this.dirB = dirB;
 
@@ -28,8 +32,8 @@ public class JarDiff {
     }
 
     public DiffResult diff(String jarInA, String jarInB) throws IOException, NoSuchFieldException, ClassNotFoundException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
-        Map<String, Long> mapA = svA.getClassesWithSvuFromJarFile(new File(dirA, jarInA));
-        Map<String, Long> mapB = svB.getClassesWithSvuFromJarFile(new File(dirB, jarInB));
+        Map<String, Long> mapA = svA.getClassesWithSvuFromJarFile(new File(dirA, jarInA), diffResultConfig.isSerializableOnly());
+        Map<String, Long> mapB = svB.getClassesWithSvuFromJarFile(new File(dirB, jarInB), diffResultConfig.isSerializableOnly());
 
         Set<String> onlyInA = new HashSet<>();
         Set<String> onlyInB = new HashSet<>(mapB.keySet());
@@ -60,9 +64,9 @@ public class JarDiff {
         File jarA = new File(args[0]);
         File jarB = new File(args[1]);
 
-        JarDiff instance = new JarDiff(jarA.getCanonicalFile().getParentFile(), jarB.getCanonicalFile().getParentFile());
+        DiffResultConfig config = new DiffResultConfig();
+        JarDiff instance = new JarDiff(config, jarA.getCanonicalFile().getParentFile(), jarB.getCanonicalFile().getParentFile());
         DiffResult result = instance.diff(jarA.getName(), jarB.getName());
-        DiffResultFormatterConfig config = new DiffResultFormatterConfig();
         DiffResultFormatter formatter = new DiffResultFormatter(config);
         System.out.println(formatter.format(result));
         // System.out.println(result);

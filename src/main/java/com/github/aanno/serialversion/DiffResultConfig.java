@@ -2,16 +2,16 @@ package com.github.aanno.serialversion;
 
 import com.google.common.base.Objects;
 
-public class DiffResultFormatterConfig {
+public class DiffResultConfig {
 
     private boolean sort = true;
     private boolean serializableOnly = true;
     private boolean sameClasses = false;
 
-    public DiffResultFormatterConfig() {
+    public DiffResultConfig() {
     }
 
-    public DiffResultFormatterConfig setSort(boolean sort) {
+    public DiffResultConfig setSort(boolean sort) {
         this.sort = sort;
         return this;
     }
@@ -28,12 +28,12 @@ public class DiffResultFormatterConfig {
         return sameClasses;
     }
 
-    public DiffResultFormatterConfig setSerializableOnly(boolean serializableOnly) {
+    public DiffResultConfig setSerializableOnly(boolean serializableOnly) {
         this.serializableOnly = serializableOnly;
         return this;
     }
 
-    public DiffResultFormatterConfig setSameClasses(boolean sameClasses) {
+    public DiffResultConfig setSameClasses(boolean sameClasses) {
         this.sameClasses = sameClasses;
         return this;
     }
@@ -41,7 +41,7 @@ public class DiffResultFormatterConfig {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        DiffResultFormatterConfig that = (DiffResultFormatterConfig) o;
+        DiffResultConfig that = (DiffResultConfig) o;
         return sort == that.sort && serializableOnly == that.serializableOnly && sameClasses == that.sameClasses;
     }
 

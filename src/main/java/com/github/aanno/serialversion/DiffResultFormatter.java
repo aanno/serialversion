@@ -6,9 +6,9 @@ import java.util.TreeSet;
 
 public class DiffResultFormatter {
 
-    private final DiffResultFormatterConfig config;
+    private final DiffResultConfig config;
 
-    public DiffResultFormatter(DiffResultFormatterConfig config) {
+    public DiffResultFormatter(DiffResultConfig config) {
         this.config = config;
     }
 
